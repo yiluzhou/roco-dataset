@@ -208,12 +208,21 @@ def process_group(group):
 
 
 def download_archive(extraction_dir, archive_url, num_retries):
+    if 'ftp:' in archive_url:
+        archive_url = archive_url.replace('ftp:', 'https:')
     if num_retries > args.num_retries:
         raise Exception("Giving up download of archive {0} after {1} tries"
                         .format(archive_url, num_retries))
 
-    return subprocess.call(['wget', '-nc', '-nd', '-c', '-q', '-P',
-                            extraction_dir, archive_url])
+    # Get the file name by joining the extraction_dir and the base name of the archive_url
+    file_name = os.path.join(extraction_dir, os.path.basename(archive_url))
+    try:
+        # Use urllib.request.urlretrieve to download the file
+        urllib.request.urlretrieve(archive_url, file_name)
+        return 0
+    except urllib.error.HTTPError as e:
+        print(f'HTTPError: {e.code} {e.reason}')
+        return 1
 
 
 def determine_new_archive_url(current_archive_url):
@@ -225,7 +234,7 @@ def determine_new_archive_url(current_archive_url):
 
     for link in root.iter('link'):
         if link.get('format') == 'tgz':
-            return link.get('href')
+            return link.get('href').replace('ftp:','https:')
 
     # check if archive is available
     for error in root.iter('error'):
