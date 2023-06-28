@@ -131,7 +131,7 @@ def process_group(group):
     result = download_archive(extraction_dir_name, archive_url,
                               num_download_retries)
 
-    # if wget returned an error, archive was moved; we try to find the new URL
+    # if returned an error, archive was moved; we try to find the new URL
     while result > 0 \
             or not os.path.exists(archive_filename):
 
@@ -321,10 +321,10 @@ def print_config(args):
 
 
 if __name__ == '__main__':
-    # Make sure that wget is available
-    if not shutil.which("wget"):
-        print("wget not found, please install wget and put it on your PATH")
-        exit(-1)
+    # # Make sure that wget is available
+    # if not shutil.which("wget"):
+    #     print("wget not found, please install wget and put it on your PATH")
+    #     exit(-1)
     args = parse_args()
     args.repository_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
     args.dlinks_folders = DLINKS_FOLDERS
