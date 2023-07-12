@@ -229,8 +229,12 @@ def determine_new_archive_url(current_archive_url):
     pmc_id = current_archive_url.split('/')[-1][:-7]
     request_url = PMCID_INFORMATION_API + pmc_id
     print('Trying to get new archive URL: ' + request_url)
-    contents = urllib.request.urlopen(request_url).read()
-    root = ET.fromstring(contents)
+    try:
+        contents = urllib.request.urlopen(request_url).read()
+        root = ET.fromstring(contents)
+    except:
+        print(f'Failed to get new archive URL for archive {current_archive_url}')
+        return None
 
     for link in root.iter('link'):
         if link.get('format') == 'tgz':
